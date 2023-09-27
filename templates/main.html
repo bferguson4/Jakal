@@ -1,0 +1,171 @@
+<html>
+<head>
+    <style>
+        .heading {
+            text-align: center;
+        }
+
+        form {
+            text-align: center;
+        }
+
+        #search {
+            width: 300px;
+            height: 40px;
+        }
+
+        table {
+            text-align: center;
+            margin: 0 auto;
+            width: 500;
+            background-color: #f7f6ed;
+        }
+
+        .gray {
+            text-align: center;
+        }
+
+        .flags {
+            width: 50px;
+            height: 30px;
+        }
+
+        .icons {
+            width: 50px;
+            height: 50px;
+        }
+
+        .player-list {
+            margin: 0 auto;
+            display: none;
+            padding: 10px;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .player-button {
+            width: 300px;
+            height: 30px;
+        }
+
+        .yellow {
+            text-align: center;
+            background-color:  #e0eb10;
+        }
+
+        .green {
+            text-align: center;
+            background-color: #71d629;
+        }
+
+        .resetButton {
+            margin: 0 auto;
+            border-radius: 12px;
+            width: 90px;
+            height: 30px;
+            transition-duration: 0.1s;
+            background-color: #d9d5cc;
+        }
+
+        .resetButton:hover {
+            background-color: #ECE7E7;
+
+        }
+
+
+    </style>
+</head>
+<body style="background-color: #ede0ca;">
+
+    <hr color="#522d0e" size="40" width="100%">
+
+    <div>
+        <h1 class="heading">Jakal</h1>
+
+        <h3 class="heading">
+            SSBU Pro Player Guessing Game
+        </h3>
+    </div>
+
+    <form action="{% url 'main' %}" method="POST" autocomplete="off">
+        {% csrf_token %}
+        <input type="text" id="search" placeholder="Guesses Left: {{num_guesses}}" onkeypress="showPlayers()" >
+        <a class="link" href="https://www.ssbwiki.com/LumiRank_Mid-Year_2023">Check Rankings</a>
+        <div id="playerDropdown" class="player-list" >
+            {% for player in players %}
+            <button type="submit" name="guessed_player" class="player-button" value={{player.id}}>{{ player.name }}</button>
+            {% endfor %}
+        </div>
+    </form>
+
+    {% if over %}
+        <script>
+            document.getElementById("search").setAttribute("disabled", "")
+        </script>
+        <div style="margin: 0 auto;">
+            <form action="{% url 'main' %}" method="get">
+                <button class="resetButton" type="submit">Play Again</button>
+            </form>
+        </div>
+     {% endif %}
+    
+    <table border ="1">
+        <tbody>
+            <tr>
+                {% for field in fields %}
+                <th>{{ field.verbose_name }}</th>
+                {% endfor %}
+            </tr>
+            
+            {% for guess in guessed_players %}
+            <tr>
+                <td class={{guess.hints.name}}>{{ guess.player.name }}</td>
+                <td class={{guess.hints.country}} > 
+                    <img src={{guess.player.country.flag.url}} class="flags" /> {{ guess.player.country.name }}</td>
+                <td class={{guess.hints.rank}}>{{ guess.player.rank }}</td>
+                <td class={{guess.hints.main}}>
+                    <img src={{guess.player.main.icon.url}}  class="icons"/> {{ guess.player.main.name }}</td>
+                <td class={{guess.hints.team}}>
+                    <img src={{guess.player.team.logo.url}}  class="icons" /> {{ guess.player.team.name }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+
+        let div = document.getElementById("playerDropdown");
+        let input = document.getElementById("search");
+
+        function showPlayers() {
+            var filter, players, player, numShown;
+            filter = input.value.toUpperCase();
+            players = div.getElementsByTagName("button");
+            numShown = 0;
+            length = players.length;
+            if (players.length >= 5) {
+                length = 5;
+            }
+            for (i = 0; i < length; i++) {
+                name = players[i].textContent;
+                if (name.toUpperCase().indexOf(filter) > -1) {
+                    players[i].style.display = "";
+                    numShown += 1;
+                } else {
+                    players[i].style.display = "none";
+                }
+            }
+            if (numShown >= 1) {
+                div.style.setProperty("display", "flex");
+            }
+        }
+
+
+        function hidePlayers() {
+            div.style.setProperty("display", "none");
+        }
+
+    </script>
+    
+
+</body>
