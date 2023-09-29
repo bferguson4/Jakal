@@ -15,6 +15,7 @@ yellow = "yellow"
 guesses = []
 num_guesses = 5
 
+# Handles showing the contents of the Jakalapp page
 def show_jakal(request):
     over = False
     guess_hints = setHints("gray")
@@ -46,14 +47,15 @@ def show_jakal(request):
                   {"fields" : fields, "players" : available_players, 
                    "guessed_players" : guesses, "over" : over, "num_guesses" : guesses_left})
 
-
+# Adds the available players left to guess
 def get_available():
     guessed_players = []
     for guess in guesses:
         guessed_players.append(guess["player"])
     available = [p for p in players if p not in guessed_players]
     return available
-    
+
+# Sets the hint dictionary to a given color
 def setHints(color):
     hints = {}
     hints["name"] = color
@@ -63,34 +65,39 @@ def setHints(color):
     hints["team"] = color
     return hints
 
+# Gets the corresponding hints from a guessed player
 def getHints(player):
     hints = {}
-    rankHints(hints, player)
-    countryHints(hints, player)
-    mainHints(hints, player)
+    rank_hints(hints, player)
+    country_hints(hints, player)
+    main_hints(hints, player)
     if (player.name == correct_player["player"].name):
         hints["name"] = green
     if (player.team == correct_player["player"].team):
         hints["team"] = green
     return hints
 
-def rankHints(hints, player):
+# Gets the corresponding rank hints from a guessed player
+def rank_hints(hints, player):
     if (player.rank == correct_player["player"].rank):
         hints["rank"] = green
     elif (abs(player.rank - correct_player["player"].rank) <= 2):
         hints["rank"] = yellow
 
-def countryHints(hints, player):
+# Gets the corresponding country hints from a guessed player
+def country_hints(hints, player):
     if (player.country == correct_player["player"].country):
         hints["country"] = green
     elif (player.country.continent == correct_player["player"].country.continent):
         hints["country"] = yellow
 
-def mainHints(hints, player):
+# Gets the corresponding main hints from a guessed player
+def main_hints(hints, player):
      if (player.main == correct_player["player"].main):
         hints["main"] = green
      elif (player.main == correct_player["player"].main.franchise):
          hints["main"] = yellow
 
+# Renders the template for showing how to play Jakal
 def show_how_to_play(request):
     return render(request, "play.html")
