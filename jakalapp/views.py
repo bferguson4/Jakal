@@ -12,40 +12,55 @@ correct_index = random.randint(1, players.count())
 correct_player = {"player" : players.get(id=correct_index)}
 green = "green"
 yellow = "yellow"
-guessed_players = []
+guesses = []
 num_guesses = 5
 
 def show_jakal(request):
     over = False
-    guess_hints = setHints()
-    if (num_guesses == len(guessed_players)):
-        over = True
+    guess_hints = setHints("gray")
+
     if (request.method == "GET"):
-        guessed_players.clear()
+        guesses.clear()
         correct_index = random.randint(1, players.count())
         correct_player["player"] = players.get(id=correct_index)
+        over = False
+
     if (request.method == "POST"):
         guessed_player = players.get(id=request.POST.get("guessed_player"))
         if (guessed_player == correct_player["player"]):
             over = True
         guess_hints = getHints(guessed_player)
         guess = {"hints" : guess_hints, "player" : guessed_player}
-        if (not guessed_players.__contains__(guess)):
-            guessed_players.append(guess)
+        if (not guesses.__contains__(guess)):
+            guesses.append(guess)
 
-    available_players = players
-    available_players = [p for p in available_players if p not in guessed_players]
+    if (num_guesses == len(guesses)):
+        over = True
+        wrong_hints = setHints("red")
+        guess = {"hints" : wrong_hints, "player" : correct_player['player']}
+        guesses.append(guess)
+
+    available_players = get_available()
+    guesses_left = 0 if num_guesses - len(guesses) < 0 else num_guesses - len(guesses) 
     return render(request, "main.html", 
                   {"fields" : fields, "players" : available_players, 
-                   "guessed_players" : guessed_players, "over" : over, "num_guesses" : num_guesses - len(guessed_players)})
+                   "guessed_players" : guesses, "over" : over, "num_guesses" : guesses_left})
 
-def setHints():
+
+def get_available():
+    guessed_players = []
+    for guess in guesses:
+        guessed_players.append(guess["player"])
+    available = [p for p in players if p not in guessed_players]
+    return available
+    
+def setHints(color):
     hints = {}
-    hints["name"] = "gray"
-    hints["country"] = "gray"
-    hints["rank"] = "gray"
-    hints["main"] = "gray"
-    hints["team"] = "gray"
+    hints["name"] = color
+    hints["country"] = color
+    hints["rank"] = color
+    hints["main"] = color
+    hints["team"] = color
     return hints
 
 def getHints(player):
@@ -77,3 +92,5 @@ def mainHints(hints, player):
      elif (player.main == correct_player["player"].main.franchise):
          hints["main"] = yellow
 
+def show_how_to_play(request):
+    return render(request, "play.html")

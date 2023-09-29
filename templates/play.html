@@ -1,0 +1,62 @@
+<style>
+
+    .backButton {
+        margin: 0 auto;
+        font-size: 20;
+        color: black;
+        text-decoration: none;
+        background-color: #ECE7E7;
+        padding: 5px 10px; 
+    }
+
+    .backButton:hover {
+        background-color: #d9d5cc;
+    }
+
+    h2 {
+        padding: 15px 0;
+    }
+
+    li {
+        padding: 10px;
+        font-size: 18;
+    }
+
+    div {
+        background-color: white;
+        text-align: center;
+        width: 400px;
+        border: 2px solid black;
+        margin: 0 auto;
+        height: 650px;
+    }
+
+</style>
+
+<body style="background-color: #ede0ca;">
+    
+    <div>
+        <h1>How To Play</h1>
+        
+        <h2>General Rules</h2>
+        
+        <ul>
+            <li>You have 5 guesses to guess a random SSBU pro player</li>
+            <li>The available players are the top 50 LumiRankMid-Year2023 players</li>
+        </ul>
+        
+        <h2>Hints</h2>
+        
+        <ul>
+            <li><span style="background-color: rgb(49, 233, 49);">Green</span> in any column is a match</li>
+            <li><span style="background-color: rgb(255, 255, 25);">Yellow in the <strong>Country</strong></span>
+            means the correct country is in the same continent</li>
+            <li><span style="background-color: rgb(255, 255, 25);">Yellow in the <strong>Rank</strong></span>
+                means the correct rank is within 2 places of the guessed rank</li>
+                <li><span style="background-color: rgb(255, 255, 25);">Yellow in the <strong>Main</strong></span>
+                    means the correct main is in the same franchise</li>
+        </ul>
+        
+        <a class="backButton" href="{% url 'main' %}">Back</a>
+    </div>
+</body>

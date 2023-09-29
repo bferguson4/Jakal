@@ -5,8 +5,8 @@
             text-align: center;
         }
 
-        form {
-            text-align: center;
+        input {
+            margin: 0 auto;
         }
 
         #search {
@@ -58,18 +58,45 @@
             background-color: #71d629;
         }
 
+        .red {
+            text-align: center;
+            background-color: red;
+        }
+
         .resetButton {
             margin: 0 auto;
             border-radius: 12px;
             width: 90px;
             height: 30px;
             transition-duration: 0.1s;
-            background-color: #d9d5cc;
+            background-color: #ECE7E7;
         }
 
         .resetButton:hover {
-            background-color: #ECE7E7;
+            background-color: #d9d5cc;
 
+        }
+
+        .banner {
+            position: relative;
+            padding: 0;
+            margin: 10px 0;
+            border: none;
+            border-top: 50px solid #522d0e; /* Adjust thickness and color as needed */
+        }
+        
+        .banner-content {
+            position: absolute;
+            top: -30px; 
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 0 10px; 
+            color: white;
+        }
+
+        .main {
+            text-align: center;
+            margin: 0 auto;
         }
 
 
@@ -77,37 +104,40 @@
 </head>
 <body style="background-color: #ede0ca;">
 
-    <hr color="#522d0e" size="40" width="100%">
+    <!-- <hr color="#522d0e" size="50" width="100%"> -->
+    <div class="banner">
+        <span class="banner-content">
+            <a style="color: white;" href="{% url 'play' %}">How to play</a>
+        </span>
+      </div>
 
-    <div>
+    <div class="main">
         <h1 class="heading">Jakal</h1>
 
         <h3 class="heading">
             SSBU Pro Player Guessing Game
         </h3>
-    </div>
 
-    <form action="{% url 'main' %}" method="POST" autocomplete="off">
-        {% csrf_token %}
-        <input type="text" id="search" placeholder="Guesses Left: {{num_guesses}}" onkeypress="showPlayers()" >
-        <a class="link" href="https://www.ssbwiki.com/LumiRank_Mid-Year_2023">Check Rankings</a>
-        <div id="playerDropdown" class="player-list" >
-            {% for player in players %}
-            <button type="submit" name="guessed_player" class="player-button" value={{player.id}}>{{ player.name }}</button>
-            {% endfor %}
-        </div>
-    </form>
-
-    {% if over %}
+        <input type="text" id="search" autocomplete="off" placeholder="Guesses Left: {{num_guesses}}" onkeypress="showPlayers()" >
+        <a  href="https://www.ssbwiki.com/LumiRank_Mid-Year_2023">Check Rankings</a>
+        <form action="{% url 'main' %}" method="POST">
+            {% csrf_token %}
+            <div id="playerDropdown" class="player-list" >
+                {% for player in players %}
+                <button type="submit" name="guessed_player" class="player-button" value={{player.id}}>{{ player.name }}</button>
+                {% endfor %}
+            </div>
+        </form>
+        {% if over %}
         <script>
             document.getElementById("search").setAttribute("disabled", "")
         </script>
-        <div style="margin: 0 auto;">
             <form action="{% url 'main' %}" method="get">
                 <button class="resetButton" type="submit">Play Again</button>
             </form>
-        </div>
-     {% endif %}
+        {% endif %}
+    </div>
+
     
     <table border ="1">
         <tbody>
@@ -142,17 +172,13 @@
             filter = input.value.toUpperCase();
             players = div.getElementsByTagName("button");
             numShown = 0;
-            length = players.length;
-            if (players.length >= 5) {
-                length = 5;
-            }
-            for (i = 0; i < length; i++) {
+            for (i = 0; i < players.length; i++) {
                 name = players[i].textContent;
-                if (name.toUpperCase().indexOf(filter) > -1) {
+                if (name.toUpperCase().indexOf(filter) == -1 || numShown >= 5) {
+                    players[i].style.display = "none";
+                } else {
                     players[i].style.display = "";
                     numShown += 1;
-                } else {
-                    players[i].style.display = "none";
                 }
             }
             if (numShown >= 1) {
